@@ -36,7 +36,9 @@ def do_addrepos(self, subcmd, opts, myproject, targetproject):
             if not archs:
                 print "no archs enabled in %s, skipping" % reponame
                 continue
-            repo_element = ET.Element('repository', name="%s_%s" % (targetproject.replace(":","_"), reponame))
+            comment_element = ET.Comment("Repositories to build against project %s" % targetproject )
+            root.append(comment_element)
+            repo_element = ET.Element('repository', name="%s_%s" % (targetproject.replace(":","_"), "_".join(archs)))
             repo_element.append(ET.Element('path', repository=reponame, project=targetproject))
             for arch in archs:
                 arch_element = ET.Element('arch')
@@ -46,6 +48,7 @@ def do_addrepos(self, subcmd, opts, myproject, targetproject):
     else:
         print "osc: an error occured"
 
+    xmlindent(root)
     edit_meta(metatype=kind,
               path_args=path,
               edit=True,
