@@ -32,12 +32,12 @@ def do_addrepos(self, subcmd, opts, myproject, targetproject):
             print "osc: no repositories found in %s" % targetproject
             return False
 
+        comment_element = ET.Comment(text="Repositories to build against project %s" % targetproject )
+        root.append(comment_element)
         for reponame, archs in repos.iteritems():
             if not archs:
                 print "no archs enabled in %s, skipping" % reponame
                 continue
-            comment_element = ET.Comment("Repositories to build against project %s" % targetproject )
-            root.append(comment_element)
             repo_element = ET.Element('repository', name="%s_%s" % (targetproject.replace(":","_"), "_".join(archs)))
             repo_element.append(ET.Element('path', repository=reponame, project=targetproject))
             for arch in archs:
