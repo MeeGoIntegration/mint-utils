@@ -1,5 +1,5 @@
 %define name mint-utils
-%define version 0.0.2
+%define version 0.0.3
 %define release 1
 
 Summary: MINT utility scripts
@@ -37,7 +37,4 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 /usr/bin/*
-
-%changelog
-* Tue Aug 23 2011 Islam Amer <islam.amer@nokia.com> 0.0.1
-- Initial packaging
+/var/lib/osc-plugins/*
