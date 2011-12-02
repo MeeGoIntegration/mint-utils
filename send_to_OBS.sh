@@ -31,13 +31,15 @@ require_clean_work_tree () {
     fi
 }
 
+add_sha1_to_version_rpm() {
+    sed -i "/Release:/s/$/git${HEADSHA1}/" *.spec || true
+}
+
 add_sha1_to_version() {
     sed -i "1s/)/git${HEADSHA1})/" debian/changelog
-    sed -i "/Release:/s/$/git${HEADSHA1}/" rpm/*.spec || true
     git branch -f tmp_sha1
     git checkout tmp_sha1
     git add debian/changelog
-    git add rpm/*.spec || true 
     git commit -m"Temporary sha1 version"
 }
 
@@ -142,7 +144,7 @@ if [ -x /usr/bin/git-buildpackage ]; then
   GBP_MIN_VER=$(git-buildpackage --version | cut -d ' ' -f 2 | cut -d '.' -f 2)
   GBP_MIC_VER=$(git-buildpackage --version | cut -d ' ' -f 2 | cut -d '.' -f 3)
 if [[ $GBP_MIN_VER -ge 5 ]] && [[ $GBP_MIC_VER -ge 27 ]] ; then
-  USING_BRANCHES="$USING_BRANCHES --git-upstream-tree=branch "
+  UPSTREAM_TREE=" --git-upstream-tree=branch "
 fi
 fi
 
@@ -214,7 +216,7 @@ if [[ -f debian/gbp.conf ]]; then
     if [[ $REAL == "no" ]]; then
 	add_sha1_to_version
     fi
-    git-buildpackage --git-export-dir="$BUILD" --git-ignore-new -S -uc -us -tc $USING_BRANCHES
+    git-buildpackage --git-export-dir="$BUILD" $UPSTREAM_TREE $USING_BRANCHES --git-ignore-new -S -uc -us -tc
 else
     GBP="no"
     if [[ $REAL == "no" ]]; then
@@ -250,9 +252,14 @@ elif [[ -e Rakefile ]]; then
     RUBY=yes
 fi
 
-# Copy over anything in rpm/ to BUILD so we pickup possible sha1sum version
-# modification later
+# Copy over anything in rpm/ to BUILD and add sha1 if needed
 cp rpm/* $BUILD/ 2>/dev/null || true
+
+if [[ $REAL == "no" ]]; then
+    pushd $BUILD
+    add_sha1_to_version_rpm
+    popd
+fi
 
 # And restore us to the debian branch
 if [[ $GBP == "yes" ]]; then
@@ -261,7 +268,7 @@ if [[ $GBP == "yes" ]]; then
 fi
 
 echo "################################################################"
-echo Sending to OBS
+echo Sending to OBS in $OBSDIR
 
 # Update to ensure we can overwrite - git is master
 (cd $OBSDIR && OSC up) || true
