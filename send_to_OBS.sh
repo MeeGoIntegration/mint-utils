@@ -31,13 +31,15 @@ require_clean_work_tree () {
     fi
 }
 
+add_sha1_to_version_rpm() {
+    sed -i "/Release:/s/$/git${HEADSHA1}/" *.spec || true
+}
+
 add_sha1_to_version() {
     sed -i "1s/)/git${HEADSHA1})/" debian/changelog
-    sed -i "/Release:/s/$/git${HEADSHA1}/" rpm/*.spec || true
     git branch -f tmp_sha1
     git checkout tmp_sha1
     git add debian/changelog
-    git add rpm/*.spec || true 
     git commit -m"Temporary sha1 version"
 }
 
@@ -250,9 +252,14 @@ elif [[ -e Rakefile ]]; then
     RUBY=yes
 fi
 
-# Copy over anything in rpm/ to BUILD so we pickup possible sha1sum version
-# modification later
+# Copy over anything in rpm/ to BUILD and add sha1 if needed
 cp rpm/* $BUILD/ 2>/dev/null || true
+
+if [[ $REAL == "no" ]]; then
+    pushd $BUILD
+    add_sha1_to_version_rpm
+    popd
+fi
 
 # And restore us to the debian branch
 if [[ $GBP == "yes" ]]; then
