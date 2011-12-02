@@ -20,8 +20,8 @@ def do_addrepos(self, subcmd, opts, myproject, targetproject):
                        path_args=path,
                        template_args=None,
                        create_new=False)
-    root = ET.fromstring(''.join(data))
     if data:
+        root = ET.fromstring(''.join(data))
         repos = {}
         for repo in get_repos_of_project(conf.config['apiurl'], targetproject):
             if repo.name not in repos:
