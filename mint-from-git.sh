@@ -76,6 +76,12 @@ git remote add https://github.com/rtomayko/tilt
 git fetch upstream
 popd
 
+git git@github.com:MeeGoIntegration/rack.git
+pushd haml
+git remote add git://github.com/rack/rack.git
+git fetch upstream
+popd
+
 git git@github.com:MeeGoIntegration/rack-protection.git
 pushd haml
 git remote add git://github.com/rkh/rack-protection.git
