@@ -38,7 +38,10 @@ def do_addrepos(self, subcmd, opts, myproject, targetproject):
             if not archs:
                 print "no archs enabled in %s, skipping" % reponame
                 continue
-            repo_element = ET.Element('repository', name="%s_%s" % (targetproject.replace(":","_"), "_".join(archs)))
+            new_reponame = "%s_%s_%s" % (targetproject.replace(":","_"), 
+                                         reponame,
+                                         "_".join(archs))
+            repo_element = ET.Element('repository', name=new_reponame)
             repo_element.append(ET.Element('path', repository=reponame, project=targetproject))
             for arch in archs:
                 arch_element = ET.Element('arch')
