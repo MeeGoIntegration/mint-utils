@@ -1,103 +1,75 @@
 #!/bin/bash
 
+MINT_GITHUB=git@github.com:MeeGoIntegration
+MINT_GITORIOUS=git@gitorious.org:meego-infrastructure-tools
+
+declare -A UPSTREAM
+UPSTREAM[ruote]=git://github.com/jmettraux/ruote.git
+UPSTREAM[parslet]=git://github.com/kschiess/parslet.git
+UPSTREAM[sourcify]=git://github.com/ngty/sourcify.git
+UPSTREAM[rufus-json]=git://github.com/jmettraux/rufus-json.git
+UPSTREAM[rufus-cloche]=git://github.com/jmettraux/rufus-cloche.git
+UPSTREAM[rufus-mnemo]=git://github.com/jmettraux/rufus-mnemo.git
+UPSTREAM[rufus-scheduler]=git://github.com/jmettraux/rufus-scheduler.git
+UPSTREAM[ruote-kit]=git://github.com/kennethkalmer/ruote-kit.git
+UPSTREAM[sinatra-respond_to]=git://github.com/cehoffman/sinatra-respond_to.git
+UPSTREAM[sinatra]=git://github.com/sinatra/sinatra.git
+UPSTREAM[haml]=git://github.com/nex3/haml.git
+UPSTREAM[tilt]=https://github.com/rtomayko/tilt
+UPSTREAM[rack]=git://github.com/rack/rack.git
+UPSTREAM[rack-protection]=git://github.com/rkh/rack-protection.git
+
+
 mkdir -p mint/github mint/gitorious
 
 pushd mint/github
-
-git clone git@github.com:MeeGoIntegration/ruote.git
-pushd ruote
-git remote add upstream git://github.com/jmettraux/ruote.git
-git fetch upstream
+for name in \
+	ruote\
+	parslet\
+	sourcify\
+	rufus-json\
+	rufus-cloche\
+	rufus-mnemo\
+	rufus-scheduler\
+	ruote-kit\
+	sinatra\
+	haml\
+	tilt\
+	rack\
+	rack-protection
+do
+    if [ -e $name ]; then
+	echo "$name already exists, skipping"
+	continue
+    fi
+    echo "Fetching $name ..."
+    git clone $MINT_GITHUB/$name.git
+    pushd $name
+    git remote add upstream ${UPSTREAM[$name]}
+    git fetch upstream
+    popd
+    echo
+done
 popd
 
-git clone git clone git@github.com:MeeGoIntegration/parslet.git
-pushd parslet
-git remote add upstream git://github.com/kschiess/parslet.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/sourcify.git
-pushd sourcify
-git remote add upstream git://github.com/ngty/sourcify.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/rufus-json.git
-pushd rufus-json
-git remote add upstream git://github.com/jmettraux/rufus-json.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/rufus-cloche.git
-pushd rufus-cloche
-git remote add upstream git://github.com/jmettraux/rufus-cloche.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/rufus-mnemo.git
-pushd rufus-mnemo
-git remote add upstream git://github.com/jmettraux/rufus-mnemo.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/rufus-scheduler.git
-pushd rufus-scheduler
-git remote add upstream git://github.com/jmettraux/rufus-scheduler.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/ruote-kit.git
-pushd ruote-kit
-git remote add upstream git://github.com/kennethkalmer/ruote-kit.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/sinatra-respond_to.git
-pushd sinatra-respond_to
-git://github.com/cehoffman/sinatra-respond_to.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/sinatra.git
-pushd sinatra
-git remote add upstream git://github.com/sinatra/sinatra.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/haml.git
-pushd haml
-git remote add git://github.com/nex3/haml.git
-git fetch upstream
-popd
-
-git clone git@github.com:MeeGoIntegration/tilt.git
-pushd haml
-git remote add https://github.com/rtomayko/tilt
-git fetch upstream
-popd
-
-git git@github.com:MeeGoIntegration/rack.git
-pushd haml
-git remote add git://github.com/rack/rack.git
-git fetch upstream
-popd
-
-git git@github.com:MeeGoIntegration/rack-protection.git
-pushd haml
-git remote add git://github.com/rkh/rack-protection.git
-git fetch upstream
-popd
-
-popd
 pushd mint/gitorious
-
-git clone git@gitorious.org:meego-infrastructure-tools/boss.git
-git clone git@gitorious.org:meego-infrastructure-tools/imger.git
-git clone git@gitorious.org:meego-infrastructure-tools/ruote-amqp-pyclient.git
-git clone git@gitorious.org:meego-infrastructure-tools/python-buildservice.git
-git clone git@gitorious.org:meego-infrastructure-tools/boss-skynet.git
-git clone git@gitorious.org:meego-infrastructure-tools/boss-python-skynet.git
-git clone git@gitorious.org:meego-infrastructure-tools/boss-viewer.git
-git clone git@gitorious.org:meego-infrastructure-tools/boss-standard-workflow.git
-
+for name in \
+	boss\
+	imger\
+	ruote-amqp-pyclient\
+	python-buildservice\
+	boss-skynet\
+	boss-python-skynet\
+	boss-viewer\
+	boss-standard-workflow
+do
+    if [ -e $name ]; then
+	echo "$name already exists, skipping"
+	continue
+    fi
+    echo "Fetching $name ..."
+    git clone $MINT_GITORIOUS/$name.git
+    echo
+done
+popd
 
