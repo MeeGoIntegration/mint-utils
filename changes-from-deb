@@ -1,0 +1,56 @@
+#!/usr/bin/python
+
+from debian.changelog import Changelog, ChangelogParseError
+import re
+import sys
+
+
+def gen_changelog(infile, outfile):
+    date_re = re.compile(r'(?P<dayname>\w\w\w), (?P<day>\d\d)'
+                         r' (?P<monthname>\w\w\w) (?P<year>\d+)')
+    try:
+        chlog = Changelog(infile)
+    except ChangelogParseError, exc:
+        sys.stderr.write("%s: %s\n" % (infile.name, str(exc)))
+        sys.exit(1)
+
+    for entry in chlog:
+        match = date_re.match(entry.date)
+        date = '%(dayname)s %(monthname)s %(day)s %(year)s' % match.groupdict()
+        changes = []
+        for line in entry.changes():
+            if not line.strip():
+                continue
+            if line.startswith("  * "):
+                changes.append("- " + line[4:].strip())
+            else:
+                changes.append("  " + line.strip())
+        outfile.write("* %s %s %s\n%s\n\n"
+            % (date, entry.author, entry.version, '\n'.join(changes)))
+
+
+def gen_changelog_file(input_filename, output_filename):
+    try:
+        infile = open(input_filename)
+    except IOError, exc:
+        sys.stderr.write("Could not open %s: %s\n" % (input_filename, exc))
+        sys.exit(1)
+
+    try:
+        outfile = open(output_filename, 'w')
+    except IOError, exc:
+        sys.stderr.write("Could not open %s for writing: %s\n"
+                         % (output_filename, exc))
+        sys.exit(1)
+
+    with infile:
+        with outfile:
+            gen_changelog(infile, outfile)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        sys.stderr.write("Usage: %s INFILE OUTFILE\n" % sys.argv[0])
+        sys.exit(2)
+
+    gen_changelog_file(sys.argv[1], sys.argv[2])
