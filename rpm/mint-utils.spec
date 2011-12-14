@@ -1,5 +1,5 @@
 %define name mint-utils
-%define version 0.0.3
+%define version 0.0.4
 %define release 1
 
 Summary: MINT utility scripts

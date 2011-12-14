@@ -1,3 +1,17 @@
+mint-utils (0.0.4-1) experimental; urgency=low
+
+  [ Pami Ketolainen ]
+  * Generalized mint-from-git.sh to prevent copypasta errors
+
+  [ Richard Braakman ]
+  * send_to_OBS: Generate meego-style .changes from debian/changelog if needed
+
+  [ Islam Amer ]
+  * install the linkprj osc plugin and send_to_OBS.sh now copies debian patches
+    for usage in the spec
+
+ -- Islam Amer <islam.amer@nokia.com>  Thu, 15 Dec 2011 00:48:32 +0200
+
 mint-utils (0.0.3-1) unstable; urgency=low
 
   * add addrepos osc plugin
