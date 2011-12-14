@@ -254,19 +254,26 @@ elif [[ -e Rakefile ]]; then
     RUBY=yes
 fi
 
+# And restore us to the debian branch
+if [[ $GBP == "yes" ]]; then
+    git checkout $PKG_BRANCH
+    gbp-pq drop || true
+fi
+
 # Copy over anything in rpm/ to BUILD and add sha1 if needed
 cp rpm/* $BUILD/ 2>/dev/null || true
+# Copy over patches listed in the debian/patches/series to BUILD and depend 
+# on user to properly include patches in the spec file
+if [ -f debian/patches/series ]; then
+    for p in $(cat debian/patches/series); do
+        cp debian/patches/$p $BUILD/ 2>/dev/null || true
+    done
+fi
 
 if [[ $REAL == "no" ]]; then
     pushd $BUILD
     add_sha1_to_version_rpm
     popd
-fi
-
-# And restore us to the debian branch
-if [[ $GBP == "yes" ]]; then
-    git checkout $PKG_BRANCH
-    gbp-pq drop || true
 fi
 
 echo "################################################################"

@@ -10,5 +10,6 @@ install:
 	install -D -m 755 newcov.py             $(DESTDIR)/usr/bin/
 	install -D -m 755 changes_from_deb	$(DESTDIR)/usr/bin/
 	install -D -m 755 addrepos.py			$(DESTDIR)/var/lib/osc-plugins
+	install -D -m 755 linkprj.py			$(DESTDIR)/var/lib/osc-plugins
 
 all: default
