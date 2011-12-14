@@ -18,14 +18,18 @@ def gen_changelog(infile, outfile):
         match = date_re.match(entry.date)
         date = '%(dayname)s %(monthname)s %(day)s %(year)s' % match.groupdict()
         changes = []
+        author = ""
         for line in entry.changes():
             if not line.strip():
                 continue
             if line.startswith("  * "):
-                changes.append("- " + line[4:].strip())
+                changes.append("- %s%s" % (author, line[4:].strip()))
+                author = ""
+            elif line.startswith("  [" ):
+                author = "%s " % line.strip()
             else:
                 changes.append("  " + line.strip())
-        outfile.write("* %s %s %s\n%s\n\n"
+        outfile.write("* %s %s - %s\n%s\n\n"
             % (date, entry.author, entry.version, '\n'.join(changes)))
 
 
