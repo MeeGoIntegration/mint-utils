@@ -3,6 +3,8 @@
 #set -x
 set -e
 
+SCRIPTHOME="$(dirname "${BASH_SOURCE[0]}" )"
+
 require_clean_work_tree () {
     # Update the index
     git update-index -q --ignore-submodules --refresh
@@ -290,6 +292,11 @@ fi
 # and over any gem file, possibly in pkg/
 mv *.gem $OBSDIR/ 2>/dev/null || true
 mv pkg/*.gem $OBSDIR/ 2>/dev/null || true
+
+if [[ ! -e "$OBSDIR/$PACKAGE.changes" ]]; then
+    echo "Generating $PACKAGE.changes from debian/changelog"
+    PATH="$SCRIPTHOME:$PATH" changes-from-deb debian/changelog "$OBSDIR/$PACKAGE.changes"
+fi
 
 # Send it to the OBS (should this use the changelog entry?)
 dpkg-parsechangelog -c1 | (
