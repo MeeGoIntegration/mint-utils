@@ -4,13 +4,12 @@ from debian.changelog import Changelog, ChangelogParseError
 import re
 import sys
 
-
 def gen_changelog(infile, outfile):
     date_re = re.compile(r'(?P<dayname>\w\w\w), (?P<day>\d\d)'
                          r' (?P<monthname>\w\w\w) (?P<year>\d+)')
     try:
         chlog = Changelog(infile)
-    except ChangelogParseError, exc:
+    except ChangelogParseError as exc:
         sys.stderr.write("%s: %s\n" % (infile.name, str(exc)))
         sys.exit(1)
 
@@ -29,20 +28,27 @@ def gen_changelog(infile, outfile):
                 author = "%s " % line.strip()
             else:
                 changes.append("  " + line.strip())
-        outfile.write("* %s %s - %s\n%s\n\n"
-            % (date, entry.author, entry.version, '\n'.join(changes)))
+
+        body=""
+        for change in changes:
+            body = "%s\n%s" % (body, change)
+
+        rpm_entry =  "* %s %s - %s\n%s\n\n" \
+                     % (date, entry.author,
+                        entry.version, body)
+        outfile.write(rpm_entry.encode("UTF-8"))
 
 
 def gen_changelog_file(input_filename, output_filename):
     try:
         infile = open(input_filename)
-    except IOError, exc:
+    except IOError as exc:
         sys.stderr.write("Could not open %s: %s\n" % (input_filename, exc))
         sys.exit(1)
 
     try:
         outfile = open(output_filename, 'w')
-    except IOError, exc:
+    except IOError as exc:
         sys.stderr.write("Could not open %s for writing: %s\n"
                          % (output_filename, exc))
         sys.exit(1)

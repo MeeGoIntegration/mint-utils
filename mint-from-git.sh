@@ -43,8 +43,8 @@ do
 	continue
     fi
     echo "Fetching $name ..."
-    git clone $MINT_GITHUB/$name.git
-    pushd $name
+    git clone $MINT_GITHUB/ruby-$name.git
+    pushd ruby-$name
     git remote add upstream ${UPSTREAM[$name]}
     git fetch upstream
     popd
