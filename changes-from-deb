@@ -16,21 +16,28 @@ def gen_changelog(infile, outfile):
 
     for entry in chlog:
         match = date_re.match(entry.date)
-        date = '%(dayname)s %(monthname)s %(day)s %(year)s' % match.groupdict()
+        date = u'%(dayname)s %(monthname)s %(day)s %(year)s' % match.groupdict()
         changes = []
-        author = ""
+        author = u""
+        # Some versions of debian.changelog.Changelog return str objects,
+        # other (later) versions return unicode objects.
         for line in entry.changes():
             if not line.strip():
                 continue
-            if line.startswith("  * "):
-                changes.append("- %s%s" % (author, line[4:].strip()))
-                author = ""
-            elif line.startswith("  [" ):
-                author = "%s " % line.strip()
+            if isinstance(line, str):
+                line = line.decode('utf-8')
+            if line.startswith(u"  * "):
+                changes.append(u"- %s%s" % (author, line[4:].strip()))
+                author = u""
+            elif line.startswith(u"  [" ):
+                author = u"%s " % line.strip()
             else:
-                changes.append("  " + line.strip())
-        outfile.write("* %s %s - %s\n%s\n\n"
-            % (date, entry.author, entry.version, '\n'.join(changes)))
+                changes.append(u"  " + line.strip())
+        if isinstance(entry.author, str):
+            entry.author = entry.author.decode('utf-8')
+        rpm_entry = u"* %s %s - %s\n%s\n\n" \
+            % (date, entry.author, entry.version, u'\n'.join(changes))
+        outfile.write(rpm_entry.encode('utf-8'))
 
 
 def gen_changelog_file(input_filename, output_filename):
