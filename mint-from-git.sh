@@ -18,33 +18,41 @@ UPSTREAM[haml]=git://github.com/nex3/haml.git
 UPSTREAM[tilt]=https://github.com/rtomayko/tilt
 UPSTREAM[rack]=git://github.com/rack/rack.git
 UPSTREAM[rack-protection]=git://github.com/rkh/rack-protection.git
+UPSTREAM[inifile]=git://github.com/MeeGoIntegration/inifile.git
+UPSTREAM[amqp]=git://github.com/ruby-amqp/amqp.git
+UPSTREAM[amq-client]=git://github.com/ruby-amqp/amq-client.git
+UPSTREAM[amq-protocol]=git://github.com/ruby-amqp/amq-protocol.git
 
 
 mkdir -p mint/github mint/gitorious
 
 pushd mint/github
 for name in \
-	ruote\
-	parslet\
-	sourcify\
-	rufus-json\
-	rufus-cloche\
-	rufus-mnemo\
-	rufus-scheduler\
-	ruote-kit\
-	sinatra\
-	haml\
-	tilt\
-	rack\
-	rack-protection
+    ruote\
+    parslet\
+    sourcify\
+    rufus-json\
+    rufus-cloche\
+    rufus-mnemo\
+    rufus-scheduler\
+    ruote-kit\
+    sinatra\
+    haml\
+    tilt\
+    rack\
+    rack-protection\
+    inifile\
+    amqp\
+    amq-client\
+    amq-protocol
 do
     if [ -e $name ]; then
 	echo "$name already exists, skipping"
 	continue
     fi
     echo "Fetching $name ..."
-    git clone $MINT_GITHUB/$name.git
-    pushd $name
+    git clone $MINT_GITHUB/$name.git ruby-$name
+    pushd ruby-$name
     git remote add upstream ${UPSTREAM[$name]}
     git fetch upstream
     popd
@@ -54,14 +62,14 @@ popd
 
 pushd mint/gitorious
 for name in \
-	boss\
-	imger\
-	ruote-amqp-pyclient\
-	python-buildservice\
-	boss-skynet\
-	boss-python-skynet\
-	boss-viewer\
-	boss-standard-workflow
+    boss\
+    imger\
+    revs\
+    ruote-amqp-pyclient\
+    python-buildservice\
+    python-boss-skynet\
+    boss-viewer\
+    boss-standard-workflow
 do
     if [ -e $name ]; then
 	echo "$name already exists, skipping"
